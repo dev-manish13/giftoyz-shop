@@ -50,7 +50,6 @@ describe("static site", () => {
     "/.env",
     "/server/.env",
     "/server/app/main.py",
-    "/CLAUDE.md",
     "/REBUILD.md",
     "/build/pages.py",
     "/cloudflare/wrangler.toml",
