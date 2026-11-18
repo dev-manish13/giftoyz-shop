@@ -1,0 +1,16 @@
+# Project-specific ignores (the global ignore also covers .env, CLAUDE.md, node_modules, etc.)
+.env
+.dev.vars
+server/.env
+server/.venv/
+server/data/
+server/backups/
+media/products/
+cloudflare/node_modules/
+cloudflare/.wrangler/
+cloudflare/public/
+cloudflare/.dev.vars
+__pycache__/
+.DS_Store
+CLAUDE.md
+.claude/

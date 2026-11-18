@@ -1,0 +1,7 @@
+# Copy to .dev.vars for `npm run dev`. Use test values only; production secrets are set
+# with `wrangler secret put <NAME>`.
+ADMIN_API_KEY=change-me-local-test-key
+PUBLIC_BASE_URL=http://localhost:8787
+# NCM_API_TOKEN=
+# NCM_WEBHOOK_SECRET=
+# TELEGRAM_BOT_TOKEN=
