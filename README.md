@@ -101,3 +101,10 @@ server/       FastAPI reference API, tests, deploy/ (Caddy + systemd for a VPS)
 ## Author
 
 Built by [Manish Kandel](https://github.com/dev-manish13).
+
+## License
+
+© 2026 Manish Kandel. All rights reserved.
+This code is shared as a portfolio project. You're welcome to read it and learn from it, but
+please don't copy it for your own site without permission. The GifToyz name, logo and
+product photos are brand assets and aren't covered by any license.
