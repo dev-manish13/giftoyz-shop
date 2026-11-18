@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Track your order | GifToyz Nepal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Track your GifToyz order with your order number or NCM tracking number and phone number. Live delivery updates from Nepal Can Move.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F86808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=d6f011a816">
+<script>try{var gt=JSON.parse(localStorage.getItem("gt_theme"));document.documentElement.dataset.theme=gt==="dark"?"dark":"light";var gl=JSON.parse(localStorage.getItem("gt_lang"));document.documentElement.lang=gl==="ne"?"ne":"en"}catch(e){}</script>
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+  <div class="wrap track-layout">
+  <div class="track-main">
+    <div class="track-head">
+      <p class="eyebrow" data-i18n="t_eyebrow"></p>
+      <h1 data-i18n="t_title"></h1>
+      <p class="lead" data-i18n="t_sub"></p>
+      <p class="delivered-by"><span data-i18n="delivered_by"></span><img src="ncm-logo-128.png" srcset="ncm-logo-128.png 1x, ncm-logo-256.png 2x" alt="" width="32" height="32"><strong>Nepal Can Move</strong></p>
+    </div>
+  <div class="track-body">
+    <form class="box" id="form" novalidate>
+      <div class="form-grid">
+        <div class="field" data-f="id"><label for="t-id" data-i18n="t_q"></label><input class="input" id="t-id" autocomplete="off" autocapitalize="characters" spellcheck="false" data-i18n-ph="t_q_ph" style="text-transform:uppercase"><span class="hint" data-i18n="t_q_hint"></span><span class="error" hidden></span></div>
+        <div class="field" data-f="phone"><label for="t-phone" data-i18n="f_phone"></label><input class="input" id="t-phone" inputmode="numeric" autocomplete="tel" maxlength="10" placeholder="98XXXXXXXX"><span class="error" hidden></span></div>
+      </div>
+      <div><button class="btn btn-primary" type="submit" id="t-btn" data-i18n="t_btn"></button></div>
+    </form>
+    <div id="result" aria-live="polite"></div>
+  </div>
+  </div>
+  <aside class="partner-card" aria-labelledby="partner-title">
+    <picture>
+      <source type="image/avif" srcset="ncm-banner-480.avif 480w, ncm-banner-960.avif 960w" sizes="(max-width: 920px) 100vw, 360px">
+      <source type="image/webp" srcset="ncm-banner-480.webp 480w, ncm-banner-960.webp 960w" sizes="(max-width: 920px) 100vw, 360px">
+      <img src="ncm-banner-480.jpg" srcset="ncm-banner-480.jpg 480w, ncm-banner-960.jpg 960w" sizes="(max-width: 920px) 100vw, 360px" width="960" height="960" loading="lazy" decoding="async" alt="Nepal Can Move: the first courier to reach every municipality in all 7 provinces and 77 districts">
+    </picture>
+    <div class="partner-body">
+      <div class="partner-head"><img src="ncm-logo-128.png" srcset="ncm-logo-128.png 1x, ncm-logo-256.png 2x" alt="Nepal Can Move logo" width="44" height="44"><div><p class="eyebrow" data-i18n="partner_eyebrow"></p><h2 id="partner-title">Nepal Can Move</h2></div></div>
+      <p class="muted" data-i18n="partner_d"></p>
+      <ul class="partner-points">
+        <li data-i18n="partner_p1"></li>
+        <li data-i18n="partner_p2"></li>
+        <li data-i18n="partner_p3"></li>
+      </ul>
+    </div>
+  </aside>
+  </div>
+</main>
+<div id="site-footer"></div>
+<script src="data.js?v=00da6c9fd9"></script>
+<script src="i18n.js?v=c80b1dab0c"></script>
+<script src="app.js?v=e068ee5b53"></script>
+<script>
+(() => {
+  const { t, esc, rs, icon, db, waLink, colorName } = GT;
+  GT.init("track");
+  const form = document.getElementById("form");
+  const result = document.getElementById("result");
+  const btn = document.getElementById("t-btn");
+  const FLOW = ["received", "confirmed", "with_ncm", "in_transit", "delivered"];
+  const ICONS = { received: "check", confirmed: "shield", with_ncm: "box", in_transit: "truck", delivered: "gift" };
+  const ORDER_RE = /^GT-\d{6}-\d{4}$/, AWB_RE = /^\d{4,12}$/, PHONE_RE = /^9[678]\d{8}$/;
+
+
+  const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? esc(iso) : d.toLocaleString(GT.lang() === "ne" ? "ne-NP" : "en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); };
+
+  const stepper = (o) => {
+    if (o.status === "cancelled") return `<ol class="stepper"><li class="done"><span class="s-dot">${icon("check")}</span><span class="s-label">${t("st_received")}</span></li><li class="bad"><span class="s-dot">${icon("x")}</span><span class="s-label">${t("st_cancelled")}</span></li></ol>`;
+    const at = o.status === "payment_pending" ? 1 : FLOW.indexOf(o.status);
+    const when = {};
+    (o.history || []).forEach((h) => (when[h.status === "payment_pending" ? "received" : h.status] = h.at));
+    return `<ol class="stepper">${FLOW.map((s, i) => {
+      const cls = i < at ? "done" : i === at ? (s === "delivered" ? "done" : "now") : "todo";
+      const key = o.status === "payment_pending" && s === "confirmed" ? "st_payment_pending" : "st_" + s;
+      const label = t(key);
+      return `<li class="${cls}"${i === at ? ' aria-current="step"' : ""}><span class="s-dot">${icon(cls === "todo" ? ICONS[s] : cls === "now" ? ICONS[s] : "check")}</span><span class="s-label">${label}</span>${when[s] ? `<span class="s-time">${fmt(when[s])}</span>` : `<span class="s-time">${t(key + "_d")}</span>`}</li>`;
+    }).join("")}</ol>`;
+  };
+
+  const orderBox = (o, awb) => `
+<div class="box track-card">
+  <div class="track-card-head">
+    <div><p class="eyebrow">${t("order_no")}</p><h2 class="mono">${esc(o.id)}</h2></div>
+    ${awb ? `<div class="awb"><p class="eyebrow">${t("awb")}</p><span class="mono">${esc(awb)}</span></div>` : ""}
+  </div>
+  ${stepper(o)}
+  ${o.items ? `<div class="totals">
+    ${o.items.map((i) => `<div><span>${i.qty} x ${esc(i.name)} · ${esc(colorName(i.color))}</span><span>${rs(i.price * i.qty)}</span></div>`).join("")}
+    <div><span>${esc(t("delivery_to", { p: o.location.name, t: t(o.location.type === "home" ? "type_home" : "type_branch") }))}</span><span>${rs(o.location.fee)}</span></div>
+    <div class="grand"><span>${t("total")}</span><span>${rs(o.total)}</span></div>
+    ${o.payment.paidNow > 0 ? `<div class="muted-row"><span>${t("paid_now")}</span><span>${rs(o.payment.paidNow)}</span></div>` : ""}
+    ${o.payment.due > 0 ? `<div class="muted-row"><span>${t("due_on_delivery")}</span><span>${rs(o.payment.due)}</span></div>` : ""}
+  </div>` : ""}
+</div>`;
+
+  const liveBox = (list, live, branch, checked) => `
+<div class="box track-live">
+  <div class="track-card-head"><h3>${t("ncm_live")}</h3>${live ? `<span class="live-dot">${t("live")}</span>` : checked ? `<span class="muted small">${esc(t("ncm_checked", { d: fmt(checked) }))}</span>` : ""}</div>
+  ${branch && branch.name ? `<p class="ncm-branch">${icon("pin")}<span>${esc(t("ncm_branch", { b: branch.name }))}${branch.phone ? ` · <a href="tel:${esc(branch.phone.replace(/[^0-9+]/g, ""))}">${esc(branch.phone)}</a>` : ""}</span></p>` : ""}
+  ${!live && !list.length ? `<p class="muted">${t("live_unavailable")}</p>` : list.length ? `<ol class="timeline">${list.map((x, i) => `<li class="${i === 0 ? "now" : "done"}"><span class="t-dot">${icon(i === 0 ? "truck" : "check")}</span><div><div class="t-title">${esc(x.status)}</div><div class="t-sub">${esc(x.at)}</div></div></li>`).join("")}</ol>` : `<p class="muted">${t("ncm_none")}</p>`}
+</div>`;
+
+  const help = (id) => `<div><a class="btn btn-secondary" href="${waLink(`Hi GifToyz, I have a question about order ${id}.`)}" target="_blank" rel="noopener">${icon("chat")}<span>${t("ask_order")}</span></a></div>`;
+  const notFound = (id) => {
+    result.innerHTML = `<div class="box"><h2 style="font-size:20px">${esc(t("not_found_order", { id }))}</h2><p class="muted">${t("not_found_order_d")}</p><div><a class="btn btn-secondary" href="${waLink(`Hi GifToyz, can you check my order ${id}?`)}" target="_blank" rel="noopener">${icon("chat")}<span>${t("msg_us")}</span></a></div></div>`;
+  };
+  const skeleton = () => {
+    result.innerHTML = `<div class="box track-card" aria-busy="true"><div class="skeleton" style="height:22px;width:40%"></div><div class="skeleton-steps">${FLOW.map(() => '<span class="skeleton s-circle"></span>').join("")}</div><div class="skeleton" style="height:14px;width:80%"></div><div class="skeleton" style="height:14px;width:60%"></div></div>`;
+  };
+  const set = (k, m) => { const f = form.querySelector(`[data-f="${k}"]`); f.classList.toggle("invalid", !!m); const e = f.querySelector(".error"); e.hidden = !m; e.textContent = m; };
+
+  const rateBox = (o) => {
+    const items = [...new Map(o.items.filter((i) => i.itemId).map((i) => [i.itemId, i])).values()];
+    if (!items.length) return "";
+    return `<section class="panel rate-box"><h2>${esc(t("rate_t"))}</h2><p class="muted small">${esc(t("rate_d"))}</p>${items.map((i) => `<form class="rate-form" data-item="${esc(i.itemId)}" novalidate>
+      <p><strong>${esc(i.name)}</strong></p>
+      <div class="star-pick" role="radiogroup">${[5, 4, 3, 2, 1].map((n) => `<label><input type="radio" name="stars" value="${n}" ${n === 5 ? "checked" : ""}><span aria-label="${esc(t("rate_stars", { n }))}">${icon("star")}</span></label>`).join("")}</div>
+      <div class="field"><label>${esc(t("rate_name"))}</label><input class="input" name="name" maxlength="40" required></div>
+      <div class="field"><label>${esc(t("rate_body"))}</label><textarea class="input" name="body" rows="3" maxlength="600" required></textarea></div>
+      <p class="error" hidden></p><button class="btn btn-primary" type="submit">${esc(t("rate_send"))}</button></form>`).join("")}</section>`;
+  };
+  const wireRate = (o, phone) => result.querySelectorAll(".rate-form").forEach((f) => f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const err = f.querySelector(".error");
+    const btn = f.querySelector("button");
+    btn.disabled = true;
+    err.hidden = true;
+    try {
+      await GT.api("/api/reviews", { method: "POST", body: { item_id: f.dataset.item, order_id: o.id, phone, name: f.name.value.trim(), stars: Number(f.stars.value), body: f.body.value.trim() } });
+      f.innerHTML = `<p class="note">${icon("check")}<span>${esc(t("rate_thanks"))}</span></p>`;
+    } catch (ex) {
+      err.textContent = ex.message;
+      err.hidden = false;
+      btn.disabled = false;
+    }
+  }));
+
+  let seq = 0;
+  const lookup = async (q, phone) => {
+    const run = ++seq;
+    const local = ORDER_RE.test(q) ? db.orders().find((x) => x.id === q && x.phone === phone) : null;
+    if (!GT.server) {
+      if (local) result.innerHTML = orderBox(local) + help(local.id); else notFound(q);
+      return;
+    }
+    skeleton();
+    btn.disabled = true;
+    try {
+      const data = await GT.api(`/api/track?${new URLSearchParams({ q, phone })}`);
+      if (run !== seq) return;
+      const o = data.order || local;
+      result.innerHTML = (o ? orderBox(o, data.awb) : "") + (data.awb ? liveBox(data.statuses, data.live, data.branch, data.checked) : "") + (data.order && data.order.status === "delivered" ? rateBox(data.order) : "") + help(data.ref);
+      if (data.order && data.order.status === "delivered") wireRate(data.order, phone);
+    } catch (e) {
+      if (run !== seq) return;
+      if (e.status === 404) { if (local) result.innerHTML = orderBox(local) + help(local.id); else notFound(q); }
+      else result.innerHTML = `<div class="note danger">${icon("info")}<span>${esc(e.message)}</span></div>` + (local ? orderBox(local) : "");
+    } finally {
+      if (run === seq) btn.disabled = false;
+    }
+  };
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = document.getElementById("t-id").value.trim().toUpperCase().replace(/\s+/g, "");
+    const phone = document.getElementById("t-phone").value.trim();
+    const okQ = ORDER_RE.test(q) || AWB_RE.test(q), okPhone = PHONE_RE.test(phone);
+    set("id", okQ ? "" : t("e_track_q"));
+    set("phone", okPhone ? "" : t("e_track_phone"));
+    if (okQ && okPhone) lookup(q, phone);
+  });
+  document.getElementById("t-phone").addEventListener("input", (e) => (e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10)));
+  const h = decodeURIComponent(location.hash.slice(1)).toUpperCase();
+  if (ORDER_RE.test(h)) {
+    document.getElementById("t-id").value = h;
+    const o = db.orders().find((x) => x.id === h);
+    if (o) { document.getElementById("t-phone").value = o.phone; lookup(h, o.phone); }
+  }
+})();
+</script>
+</body>
+</html>

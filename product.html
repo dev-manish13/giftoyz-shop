@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Product | GifToyz Nepal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Gift details, price in NPR, stock and delivery fee to your area in Nepal.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F86808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=d6f011a816">
+<script>try{var gt=JSON.parse(localStorage.getItem("gt_theme"));document.documentElement.dataset.theme=gt==="dark"?"dark":"light";var gl=JSON.parse(localStorage.getItem("gt_lang"));document.documentElement.lang=gl==="ne"?"ne":"en"}catch(e){}</script>
+</head>
+<body class="with-sticky">
+<div id="site-header"></div>
+<main id="root"></main>
+<section class="section" id="reviews-wrap" hidden>
+  <div class="wrap">
+    <div class="section-head"><div><h2 data-i18n="reviews_t"></h2><p class="muted" id="reviews-sum"></p></div></div>
+    <div class="reviews" id="reviews"></div>
+  </div>
+</section>
+<section class="section surface-band" id="related-wrap" hidden>
+  <div class="wrap">
+    <div class="section-head"><h2 data-i18n="related"></h2><a class="text-link" href="/products"><span data-i18n="see_all"></span></a></div>
+    <div class="grid" id="related"></div>
+  </div>
+</section>
+<div id="site-footer"></div>
+<script src="data.js?v=00da6c9fd9"></script>
+<script src="i18n.js?v=c80b1dab0c"></script>
+<script src="app.js?v=e068ee5b53"></script>
+<script>
+(() => {
+  const { SEED, t, esc, rs, icon, art, media, productById, products, categoryById, catName, colorName, colorHex, pName, pBlurb, pSpecs, stockNote, productCard, cart, waLink, mountLocationPicker, hydrate } = GT;
+  GT.init("shop");
+  const root = document.getElementById("root");
+  const itemParam = new URLSearchParams(location.search).get("item");
+  const p = itemParam ? GT.productByItemId(itemParam) : productById(Number((location.hash.match(/item-(\d+)/) || [])[1]));
+  addEventListener("hashchange", () => location.reload());
+  if (!p || p.visible === false) {
+    document.body.classList.remove("with-sticky");
+    root.innerHTML = `<div class="wrap section"><div class="empty"><div class="empty-art">${art("teddy", "#C47A3D")}</div><h3>${t("not_found_t")}</h3><p>${t("not_found_d")}</p><a class="btn btn-primary" href="/products">${t("browse_all")}</a></div></div>`;
+    return;
+  }
+  const cat = categoryById(p.cat);
+  const sale = p.compare && p.compare > p.price;
+  const state = { color: p.colors[0], qty: 1, loc: null, img: 0 };
+  document.title = `${pName(p)} | GifToyz Nepal`;
+  if (!window.GT_CATALOG) {
+    document.querySelector('meta[name="description"]').content = `${pName(p)}, ${rs(p.price)}. ${pBlurb(p)}`;
+    const ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "Product", name: p.name, sku: p.itemId || `GT-${p.id}`, description: p.blurb, brand: { "@type": "Brand", name: "GifToyz" }, offers: { "@type": "Offer", priceCurrency: "NPR", price: p.price, availability: p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } });
+    document.head.appendChild(ld);
+  }
+  const images = p.images || [];
+
+  root.innerHTML = `
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb" style="padding-top:32px"><a href="/">${t("crumb_home")}</a><span>/</span><a href="/products#${cat.id}">${catName(cat)}</a><span>/</span><span>${esc(pName(p))}</span></nav>
+  <div class="pdp">
+    <div class="gallery"><div class="thumbs" id="thumbs"></div><div id="main"></div></div>
+    <div class="pdp-info">
+      <div>
+        <p class="eyebrow">${catName(cat)} · ${t("item_no", { n: p.itemId || p.id })} · ${t("kg", { kg: Number(p.weight_kg || 0.5) })}</p>
+        <h1>${esc(pName(p))}</h1>
+        <div class="pdp-price"><span class="price">${rs(p.price)}</span>${sale ? `<span class="price-was">${rs(p.compare)}</span><span class="save">${t("you_save", { n: rs(p.compare - p.price) })}</span>` : ""}</div>
+        <div style="margin-top:8px">${stockNote(p)}</div>
+      </div>
+      <p class="pdp-blurb">${esc(pBlurb(p))}</p>
+      <div><div class="opt-label">${t("colour")}<span id="color-name"></span></div><div class="swatch-row" id="swatches"></div></div>
+      ${p.stock > 0 ? `
+      <div class="buy-stack">
+        <div class="buy-row">
+          <div class="qty" aria-label="${t("qty")}"><button type="button" id="q-minus" aria-label="-">&minus;</button><output id="q-val">1</output><button type="button" id="q-plus" aria-label="+">+</button></div>
+          <button class="btn btn-primary" type="button" id="add">${t("add_to_cart")}</button>
+        </div>
+        <a class="btn btn-secondary" id="wa" target="_blank" rel="noopener">${icon("chat")}<span>${t("order_wa")}</span></a>
+      </div>` : `
+      <div class="buy-stack">
+        <div class="note">${icon("info")}<span>${t("sold_out_note")}</span></div>
+        <a class="btn btn-primary" href="${waLink(t("notify_msg", { p: p.name, id: p.id }))}" target="_blank" rel="noopener">${t("notify_wa")}</a>
+      </div>`}
+      <div class="box">
+        <h3>${t("delivery_check")}</h3>
+        <div class="field loc">
+          <label for="loc-input">${t("loc_label")}</label>
+          <input class="input" id="loc-input" type="text" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="loc-list" placeholder="${esc(t("loc_ph"))}">
+          <div class="loc-list" id="loc-list" role="listbox" hidden></div>
+        </div>
+        <div id="loc-result" class="muted small">${t("loc_hint")}</div>
+        <p id="pd-weight" class="muted small" style="margin-top:10px"></p>
+      </div>
+      <div class="assure">
+        <div>${icon("truck")}<span>${t("assure_track")}</span></div>
+        <div>${icon("cash")}<span>${t("assure_pay")}</span></div>
+        <div>${icon("shield")}<span>${t("assure_check")}</span></div>
+      </div>
+      <div>
+        <details class="acc" open><summary>${t("details")}${icon("plus")}</summary><div class="acc-body"><ul>${pSpecs(p).map((s) => `<li>${esc(s)}</li>`).join("")}</ul></div></details>
+        <details class="acc"><summary>${t("delivery_payment")}${icon("plus")}</summary><div class="acc-body"><p>${t("acc_delivery")}</p><a class="text-link" href="/help#delivery">${t("see_rates")}</a></div></details>
+        <details class="acc"><summary>${t("returns")}${icon("plus")}</summary><div class="acc-body"><p>${t("acc_returns")}</p><a class="text-link" href="/help#returns">${t("read_policy")}</a></div></details>
+      </div>
+    </div>
+  </div>
+</div>
+${p.stock > 0 ? `<div class="sticky-buy"><span class="price">${rs(p.price)}</span><button class="btn btn-primary" type="button" id="add-sticky">${t("add_to_cart")}</button></div>` : ""}`;
+  if (p.stock <= 0) document.body.classList.remove("with-sticky");
+
+  const paint = () => {
+    const main = document.getElementById("main");
+    const thumbs = document.getElementById("thumbs");
+    document.querySelector(".gallery").classList.toggle("single", images.length ? images.length < 2 : p.colors.length < 2);
+    if (images.length) {
+      main.innerHTML = media(p, { image: images[state.img], cls: "main", eager: true });
+      thumbs.innerHTML = images.length > 1 ? images.map((img, i) => `<button type="button" data-img-i="${i}" aria-pressed="${i === state.img}" aria-label="Photo ${i + 1}">${media(p, { image: img, cls: "square" })}</button>`).join("") : "";
+    } else {
+      main.innerHTML = media(p, { color: state.color, cls: "main" });
+      thumbs.innerHTML = p.colors.length > 1 ? p.colors.map((k) => `<button type="button" data-color="${k}" aria-pressed="${k === state.color}" aria-label="${esc(colorName(k))}">${media(p, { color: k, cls: "square" })}</button>`).join("") : "";
+    }
+    document.getElementById("color-name").textContent = colorName(state.color);
+    document.getElementById("swatches").innerHTML = p.colors.map((k) => `<button class="swatch-btn" type="button" data-color="${k}" aria-pressed="${k === state.color}" aria-label="${esc(colorName(k))}" style="background:${colorHex(k)}"></button>`).join("");
+    const wa = document.getElementById("wa");
+    if (wa) {
+      const lines = [t("wa_order_msg", { qty: state.qty, p: p.name, id: p.id, c: colorName(state.color), price: rs(p.price * state.qty) })];
+      if (state.loc) lines.push(t("wa_deliver_to", { loc: `${state.loc.name}${state.loc.district ? ", " + state.loc.district : ""}` }));
+      wa.href = waLink(lines.join("\n"));
+    }
+    const q = document.getElementById("q-val");
+    if (q) q.textContent = state.qty;
+    hydrate(root);
+  };
+  root.addEventListener("click", (e) => {
+    const c = e.target.closest("[data-color]");
+    if (c) {
+      state.color = c.dataset.color;
+      const match = images.findIndex((img) => img.color === state.color);
+      if (match >= 0) state.img = match;
+      paint();
+    }
+    const im = e.target.closest("[data-img-i]");
+    if (im) { state.img = Number(im.dataset.imgI); if (images[state.img].color) state.color = images[state.img].color; paint(); }
+  });
+  document.getElementById("q-minus")?.addEventListener("click", () => { state.qty = Math.max(1, state.qty - 1); paint(); showLoc(); });
+  document.getElementById("q-plus")?.addEventListener("click", () => { state.qty = Math.min(p.stock, state.qty + 1); paint(); showLoc(); });
+  const add = () => cart.add(p.id, state.color, state.qty);
+  document.getElementById("add")?.addEventListener("click", add);
+  document.getElementById("add-sticky")?.addEventListener("click", add);
+  const showLoc = () => {
+    const row = state.loc;
+    const pw = document.getElementById("pd-weight");
+    if (pw) pw.textContent = t("pd_weight", { kg: GT.parcelKg([{ weight_kg: p.weight_kg, qty: state.qty }]) });
+    const out = document.getElementById("loc-result");
+    if (!out) return;
+    if (!row) { out.className = "muted small"; out.textContent = t("loc_hint"); }
+    else {
+      out.className = "";
+      const kg = GT.parcelKg([{ weight_kg: p.weight_kg, qty: state.qty }]);
+      out.innerHTML = `<div class="choice-grid"><div class="choice static"><span class="c-title">${t("home_delivery")}<span class="c-price">${rs(GT.weightedFee(row.home, kg))}</span></span><span class="c-sub">${esc(t("to_door", { p: row.name }))}</span></div><div class="choice static"><span class="c-title">${t("branch_pickup")}<span class="c-price">${rs(GT.weightedFee(row.branch, kg))}</span></span><span class="c-sub">${esc(t("collect_from", { p: row.name }))}</span></div></div>`;
+    }
+  };
+  mountLocationPicker({
+    input: document.getElementById("loc-input"),
+    list: document.getElementById("loc-list"),
+    onPick(row) {
+      state.loc = row;
+      showLoc();
+      paint();
+    }
+  });
+  paint();
+  showLoc();
+  const related = products().filter((x) => x.id !== p.id && x.stock > 0).sort((a, b) => (b.cat === p.cat) - (a.cat === p.cat) || b.occasions.filter((o) => p.occasions.includes(o)).length - a.occasions.filter((o) => p.occasions.includes(o)).length).slice(0, 4);
+  document.getElementById("related").innerHTML = related.map(productCard).join("");
+  document.getElementById("related-wrap").hidden = !related.length;
+  const rv = window.GT_REVIEWS;
+  if (rv && rv.count > 0) {
+    const stars = (n) => `<span class="stars" aria-label="${esc(t("rate_stars", { n }))}">${[1, 2, 3, 4, 5].map((i) => `<span class="${i <= Math.round(n) ? "on" : ""}">${icon("star")}</span>`).join("")}</span>`;
+    document.getElementById("reviews-sum").innerHTML = `${stars(rv.average)} ${esc(t(rv.count === 1 ? "reviews_n1" : "reviews_n", { avg: rv.average, n: rv.count }))}`;
+    document.getElementById("reviews").innerHTML = rv.reviews.map((r) => `<article class="review">${stars(r.stars)}<p>${esc(r.body)}</p><p class="muted small">${esc(r.name)} · ${esc(new Date(r.at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }))}</p></article>`).join("");
+    document.getElementById("reviews-wrap").hidden = false;
+  }
+  hydrate(document.getElementById("related"));
+})();
+</script>
+</body>
+</html>

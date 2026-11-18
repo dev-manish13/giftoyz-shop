@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Checkout | GifToyz Nepal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Review your cart, choose delivery and pay.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F86808">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=d6f011a816">
+<script>try{var gt=JSON.parse(localStorage.getItem("gt_theme"));document.documentElement.dataset.theme=gt==="dark"?"dark":"light";var gl=JSON.parse(localStorage.getItem("gt_lang"));document.documentElement.lang=gl==="ne"?"ne":"en"}catch(e){}</script>
+</head>
+<body>
+<div id="site-header"></div>
+<main id="root"></main>
+<div id="site-footer"></div>
+<script src="data.js?v=00da6c9fd9"></script>
+<script src="i18n.js?v=c80b1dab0c"></script>
+<script src="app.js?v=e068ee5b53"></script>
+<script>
+(() => {
+  const { SEED, t, esc, rs, icon, art, media, productById, colorName, cart, waLink, db, idb, store, mountLocationPicker, copyText, hydrate } = GT;
+  GT.init("");
+  const root = document.getElementById("root");
+  const settings = { ...db.settings(), ...(GT.server ? { codAdvance: !!GT.server.codAdvance } : {}) };
+  const khaltiGateway = !!(GT.server && GT.server.khalti);
+  const viaKhalti = () => khaltiGateway && state.wallet === "khalti";
+  const tokenKey = (id) => `gt_tok_${id}`;
+  const allWallets = [["esewa", "eSewa"], ["khalti", "Khalti"], ["bank", t("wallet_bank")]];
+  const offered = allWallets.filter(([k]) => (k === "khalti" && khaltiGateway) || (settings.qr && settings.qr[k]));
+  const wallets = offered.length ? offered : allWallets;
+  const acct = (k) => (settings.qr_info && settings.qr_info[k]) || {};
+  const newId = () => {
+    const d = new Date();
+    return `GT-${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}`;
+  };
+  let orderId;
+  try { orderId = sessionStorage.getItem("gt_pending_id") || newId(); sessionStorage.setItem("gt_pending_id", orderId); } catch { orderId = newId(); }
+  const state = { loc: null, delivery: "home", mode: "cod", wallet: wallets[0][0], gift: false };
+  const fee = () => (state.loc ? GT.weightedFee(state.delivery === "home" ? state.loc.home : state.loc.branch, cart.weight()) : 0);
+  const payNow = () => {
+    const total = cart.subtotal() + fee();
+    if (state.mode === "full") return total;
+    return settings.codAdvance ? fee() : 0;
+  };
+
+  const renderEmpty = () => {
+    root.innerHTML = `<div class="wrap section"><div class="empty"><div class="empty-art">${art("teddy", "#C47A3D")}</div><h3>${t("cart_empty_t")}</h3><p>${t("cart_empty_d")}</p><a class="btn btn-primary" href="/products">${t("hero_cta")}</a></div></div>`;
+  };
+
+  const lines = cart.linesHtml;
+
+  const paintSummary = () => {
+    const sub = cart.subtotal();
+    const total = sub + fee();
+    const now = payNow();
+    document.getElementById("lines").innerHTML = lines();
+    document.getElementById("totals").innerHTML = `
+      <div><span>${t("subtotal")}</span><span>${rs(sub)}</span></div>
+      <div><span>${t("delivery")}</span><span>${state.loc ? rs(fee()) : `<span class="muted">${t("add_location")}</span>`}</span></div>
+      ${cart.weight() > GT.FREE_KG ? `<div class="muted-row"><span>${t("heavy_parcel", { kg: cart.weight() })}</span><span></span></div>` : ""}
+      <div class="grand"><span>${t("total")}</span><span>${rs(total)}</span></div>
+      ${state.loc && now > 0 ? `<div class="now"><span>${t("pay_now_line")}</span><span>${rs(now)}</span></div>` : ""}
+      ${state.loc && total - now > 0 ? `<div class="muted-row"><span>${t("pay_later_line")}</span><span>${rs(total - now)}</span></div>` : ""}`;
+    const rule = document.getElementById("pay-rule");
+    if (rule) {
+      rule.textContent = !state.loc ? t("pick_loc_first") : state.mode === "full" ? t("full_rule", { total: rs(total) }) : t("cod_rule", { fee: rs(fee()), rest: rs(total - fee()) });
+    }
+    const amt = document.getElementById("amt-now");
+    if (amt) amt.textContent = state.loc ? rs(now) : "—";
+    document.getElementById("qr-block").hidden = now <= 0 && !!state.loc;
+    hydrate(document.getElementById("lines"));
+  };
+
+  const paintQr = async () => {
+    const manual = document.getElementById("qr-manual");
+    const gateway = document.getElementById("khalti-note");
+    if (manual) manual.hidden = viaKhalti();
+    if (gateway) gateway.hidden = !viaKhalti();
+    if (viaKhalti()) return;
+    const info = acct(state.wallet);
+    const box = document.getElementById("qr-acct");
+    if (box) {
+      box.hidden = !(info.name || info.number);
+      box.innerHTML = `${info.bank ? `<div class="small muted">${esc(info.bank)}</div>` : ""}${info.name ? `<div class="label">${t("pay_acct_name")}</div><strong>${esc(info.name)}</strong>` : ""}${info.number ? `<div class="label" style="margin-top:6px">${t(state.wallet === "bank" ? "pay_acct_no" : "pay_acct_mobile")}</div><div class="copy-row"><code>${esc(info.number)}</code><button class="text-btn" type="button" data-copy="acct">${t("copy")}</button></div>` : ""}`;
+    }
+    const frame = document.getElementById("qr-frame");
+    const label = wallets.find((w) => w[0] === state.wallet)[1];
+    const imgId = settings.qr[state.wallet];
+    const src = typeof imgId === "string" && imgId.startsWith("/media/") ? imgId : imgId ? await idb.get(imgId).then((b) => (b ? URL.createObjectURL(b) : null)) : null;
+    frame.innerHTML = src ? `<img src="${esc(src)}" alt="${esc(t("qr_placeholder", { w: label }))}">` : `<div class="qr-empty">${icon("qr")}<span>${esc(t("qr_placeholder", { w: label }))}</span></div>`;
+  };
+
+  const renderForm = () => {
+    if (!cart.items().length) return renderEmpty();
+    if (settings.orders_paused) {
+      root.innerHTML = `<div class="wrap section"><div class="empty"><div class="empty-art">${art("giftbox", "#F86808")}</div><h3>${t("paused_t")}</h3><p>${esc(GT.L(settings.pause_en, settings.pause_ne))}</p><a class="btn btn-wa" href="${waLink("Hi GifToyz, I'd like to order when you're back.")}" target="_blank" rel="noopener">${icon("chat")}<span>${t("c_open_wa")}</span></a></div></div>`;
+      return;
+    }
+    root.innerHTML = `
+<div class="wrap">
+  <section class="page-head" style="padding-bottom:32px"><h1>${t("checkout")}</h1></section>
+  <form class="checkout" id="form" novalidate>
+    <div class="co-main">
+      <section class="co-section">
+        <h2><span class="step-n">1</span>${t("s_details")}</h2>
+        <div class="form-grid">
+          <div class="field full" data-f="name"><label for="f-name">${t("f_name")}</label><input class="input" id="f-name" autocomplete="name" maxlength="60"><span class="error" hidden></span></div>
+          <div class="field" data-f="phone"><label for="f-phone">${t("f_phone")}</label><input class="input" id="f-phone" inputmode="numeric" autocomplete="tel" placeholder="98XXXXXXXX" maxlength="10"><span class="hint">${t("f_phone_hint")}</span><span class="error" hidden></span></div>
+          <div class="field" data-f="phone2"><label for="f-phone2">${t("f_phone2")}</label><input class="input" id="f-phone2" inputmode="numeric" placeholder="97XXXXXXXX" maxlength="10"><span class="error" hidden></span></div>
+        </div>
+      </section>
+      <section class="co-section">
+        <h2><span class="step-n">2</span>${t("s_where")}</h2>
+        <div class="field loc" data-f="loc">
+          <label for="f-loc">${t("f_location")}</label>
+          <input class="input" id="f-loc" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="f-loc-list" placeholder="${esc(t("loc_ph"))}">
+          <div class="loc-list" id="f-loc-list" role="listbox" hidden></div>
+          <span class="hint">${t("f_loc_hint")}</span><span class="error" hidden></span>
+        </div>
+        <div class="choice-grid" id="dchoice" hidden></div>
+        <div class="field" data-f="address"><label for="f-address">${t("f_address")}</label><textarea class="textarea" id="f-address" maxlength="200" placeholder="${esc(t("f_address_ph"))}"></textarea><span class="error" hidden></span></div>
+      </section>
+      <section class="co-section">
+        <h2><span class="step-n">3</span>${t("s_payment")}</h2>
+        <div class="choice-grid">
+          <label class="choice"><input type="radio" name="mode" value="cod" checked><span class="c-title">${t("pay_cod")}</span><span class="c-sub">${settings.codAdvance ? t("pay_cod_d") : ""}</span></label>
+          <label class="choice"><input type="radio" name="mode" value="full"><span class="c-title">${t("pay_full")}</span><span class="c-sub">${t("pay_full_d")}</span></label>
+        </div>
+        <div class="note accent">${icon("info")}<span id="pay-rule"></span></div>
+        <div id="qr-block" style="display:grid;gap:20px">
+          <div class="seg" role="group" aria-label="Wallet">${wallets.map(([k, n]) => `<button type="button" data-wallet="${k}" aria-pressed="${k === state.wallet}">${n}</button>`).join("")}</div>
+          <div class="note accent" id="khalti-note" hidden>${icon("shield")}<span>${t("khalti_gateway_note")}</span></div>
+          <div id="qr-manual" style="display:grid;gap:20px">
+          <div class="pay-qr">
+            <div class="qr-frame" id="qr-frame"></div>
+            <div style="display:grid;gap:14px;min-width:0">
+              <div class="pay-acct" id="qr-acct" hidden></div>
+              <div class="field"><span class="label">${t("amount_now")}</span><div class="copy-row"><code id="amt-now">—</code><button class="text-btn" type="button" data-copy="amt">${t("copy")}</button></div></div>
+              <div class="field"><span class="label">${t("remark")}</span><div class="copy-row"><code>${orderId}</code><button class="text-btn" type="button" data-copy="ref">${t("copy")}</button></div></div>
+              <p class="muted small">${t("scan_hint")}</p>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field full" data-f="txn"><label for="f-txn">${t("f_txn_opt")}</label><input class="input" id="f-txn" autocomplete="off" maxlength="40" placeholder="${esc(t("f_txn_ph"))}"><span class="hint">${t("shot_on_wa")}</span><span class="error" hidden></span></div>
+          </div>
+          <div class="note">${icon("shield")}<span>${t("verify_note")}</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <aside class="summary">
+      <h2>${t("your_order")}</h2>
+      <div class="lines" id="lines"></div>
+      <div class="totals" id="totals"></div>
+      <div class="note danger" id="form-error" role="alert" hidden></div>
+      <button class="btn btn-primary btn-block" type="submit" id="place">${t("place_order")}</button>
+      <p class="muted small" style="text-align:center">${t("next_wa")}</p>
+    </aside>
+  </form>
+</div>`;
+    bind();
+    paintSummary();
+    paintQr();
+  };
+
+  const err = (k, m) => {
+    const f = root.querySelector(`[data-f="${k}"]`);
+    if (!f) return;
+    f.classList.toggle("invalid", !!m);
+    const e = f.querySelector(".error");
+    e.hidden = !m;
+    e.textContent = m || "";
+  };
+
+  const paintDelivery = () => {
+    const box = document.getElementById("dchoice");
+    box.hidden = !state.loc;
+    if (state.loc) {
+      box.innerHTML = `<label class="choice"><input type="radio" name="delivery" value="home" ${state.delivery === "home" ? "checked" : ""}><span class="c-title">${t("home_delivery")}<span class="c-price">${rs(GT.weightedFee(state.loc.home, cart.weight()))}</span></span><span class="c-sub">${t("rider_brings")}</span></label>
+      <label class="choice"><input type="radio" name="delivery" value="branch" ${state.delivery === "branch" ? "checked" : ""}><span class="c-title">${t("branch_pickup")}<span class="c-price">${rs(GT.weightedFee(state.loc.branch, cart.weight()))}</span></span><span class="c-sub">${esc(t("collect_from", { p: state.loc.name }))}, ${t("save_n", { n: rs(GT.weightedFee(state.loc.home, cart.weight()) - GT.weightedFee(state.loc.branch, cart.weight())) })}</span></label>`;
+    }
+    paintSummary();
+  };
+
+  const bind = () => {
+    const form = document.getElementById("form");
+    mountLocationPicker({ input: document.getElementById("f-loc"), list: document.getElementById("f-loc-list"), onPick(row) { state.loc = row; if (row) err("loc", ""); paintDelivery(); } });
+    form.addEventListener("change", (e) => {
+      if (e.target.name === "delivery") { state.delivery = e.target.value; paintSummary(); }
+      if (e.target.name === "mode") { state.mode = e.target.value; paintSummary(); }
+    });
+    ["f-phone", "f-phone2"].forEach((id) => document.getElementById(id).addEventListener("input", (e) => (e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10))));
+    form.addEventListener("click", (e) => {
+      const w = e.target.closest("[data-wallet]");
+      if (w) { state.wallet = w.dataset.wallet; form.querySelectorAll("[data-wallet]").forEach((b) => b.setAttribute("aria-pressed", String(b === w))); paintQr(); }
+      const c = e.target.closest("[data-copy]");
+      if (c) copyText(c.dataset.copy === "ref" ? orderId : c.dataset.copy === "acct" ? (acct(state.wallet).number || "") : String(payNow()), c);
+      const btn = e.target.closest("[data-dec],[data-inc],[data-remove]");
+      if (btn) {
+        const items = cart.change(btn);
+        if (!items.length) return renderEmpty();
+        paintDelivery();
+        paintSummary();
+      }
+    });
+    form.addEventListener("submit", (e) => { e.preventDefault(); submit(); });
+  };
+
+  const submit = async () => {
+    const v = (id) => document.getElementById(id).value.trim();
+    const needsPay = state.loc && payNow() > 0;
+    const errors = {
+      name: v("f-name").length < 2 ? t("e_name") : "",
+      phone: /^9[678]\d{8}$/.test(v("f-phone")) ? "" : t("e_phone"),
+      phone2: !v("f-phone2") || /^9[678]\d{8}$/.test(v("f-phone2")) ? "" : t("e_phone2"),
+      loc: state.loc ? "" : t("e_loc"),
+      address: v("f-address").length < 6 ? t("e_address") : "",
+      txn: ""
+    };
+    Object.entries(errors).forEach(([k, m]) => err(k, m));
+    const first = Object.entries(errors).find(([, m]) => m);
+    if (first) {
+      const f = root.querySelector(`[data-f="${first[0]}"]`);
+      f.scrollIntoView({ behavior: "smooth", block: "center" });
+      f.querySelector(".input,.textarea")?.focus({ preventScroll: true });
+      return;
+    }
+    const formError = document.getElementById("form-error");
+    formError.hidden = true;
+    if (GT.server) {
+      const place = document.getElementById("place");
+      const label = place.textContent;
+      place.disabled = true;
+      place.textContent = t(viaKhalti() ? "khalti_starting" : "placing");
+      try {
+        const res = await GT.api("/api/orders", { method: "POST", body: {
+          ref: orderId,
+          items: cart.items().map((l) => ({ id: l.id, color: l.color, qty: l.qty })),
+          name: v("f-name"), phone: v("f-phone"), phone2: v("f-phone2"),
+          location_key: state.loc.key, district: state.loc.district || "", delivery: state.delivery,
+          address: v("f-address"),
+          gift: null,
+          mode: state.mode, wallet: state.wallet, txn: viaKhalti() ? "" : v("f-txn"), lang: GT.lang()
+        } });
+        const o = { ...res.order, name: v("f-name"), phone: v("f-phone"), phone2: v("f-phone2"), address: v("f-address"),
+          gift: null,
+          payment: { ...res.order.payment, txn: viaKhalti() ? "" : v("f-txn") } };
+        try { sessionStorage.setItem(tokenKey(o.id), res.token); localStorage.setItem(tokenKey(o.id), res.token); } catch {}
+        const orders = db.orders().filter((x) => x.id !== o.id);
+        orders.unshift(o);
+        db.saveOrders(orders);
+        cart.save([]);
+        try { sessionStorage.removeItem("gt_pending_id"); } catch {}
+        if (res.khalti && o.payment.paidNow > 0) {
+          const pay = await GT.api("/api/payments/khalti/initiate", { method: "POST", body: { order_id: o.id, token: res.token } });
+          location.href = pay.payment_url;
+          return;
+        }
+        renderConfirm(o);
+        scrollTo(0, 0);
+      } catch (e) {
+        formError.textContent = e.message;
+        formError.hidden = false;
+        place.disabled = false;
+        place.textContent = label;
+      }
+      return;
+    }
+    let shotId = null;
+    const file = document.getElementById("f-shot")?.files[0];
+    if (file) { shotId = `shot-${orderId}`; try { await idb.put(shotId, file); } catch { shotId = null; } }
+    const items = cart.items().map((l) => { const p = productById(l.id); return { id: p.id, name: p.name, color: l.color, qty: l.qty, price: p.price }; });
+    const subtotal = cart.subtotal();
+    const total = subtotal + fee();
+    const now = payNow();
+    const order = {
+      id: orderId, createdAt: new Date().toISOString(), lang: GT.lang(),
+      name: v("f-name"), phone: v("f-phone"), phone2: v("f-phone2"),
+      location: { key: state.loc.key, name: state.loc.name, district: state.loc.district, type: state.delivery, fee: fee() },
+      address: v("f-address"),
+      gift: null,
+      payment: { mode: state.mode, wallet: now > 0 ? state.wallet : null, txn: now > 0 ? v("f-txn") : "", paidNow: now, due: total - now, screenshot: shotId, verified: false },
+      items, subtotal, total,
+      status: now > 0 ? "payment_pending" : "received",
+      history: [{ at: new Date().toISOString(), status: now > 0 ? "payment_pending" : "received" }]
+    };
+    const orders = db.orders();
+    orders.unshift(order);
+    db.saveOrders(orders);
+    cart.save([]);
+    try { sessionStorage.removeItem("gt_pending_id"); } catch {}
+    renderConfirm(order);
+    scrollTo(0, 0);
+  };
+
+  const walletName = (k) => (wallets.find((w) => w[0] === k) || [k, k])[1];
+  const waMessage = (o) => [
+    `New order ${o.id}`, "",
+    `Name: ${o.name}`,
+    `Phone: ${o.phone}${o.phone2 ? " / " + o.phone2 : ""}`,
+    `Location: ${o.location.name}${o.location.district ? ", " + o.location.district : ""}`,
+    `Delivery: ${o.location.type === "home" ? "Home delivery" : "NCM branch pickup"} (Rs ${o.location.fee})`,
+    `Address: ${o.address}`, "",
+    "Items:",
+    ...o.items.map((i) => `- ${i.qty} x ${i.name} (${SEED.swatch[i.color]?.en || i.color}) Rs ${(i.price * i.qty).toLocaleString("en-IN")}`), "",
+    `Total: Rs ${o.total.toLocaleString("en-IN")}`,
+    o.payment.paidNow > 0 ? (o.payment.gateway === "khalti" ? `Paid now: Rs ${o.payment.paidNow.toLocaleString("en-IN")} by Khalti${o.payment.verified ? " (confirmed)" : " (not confirmed yet)"}` : `Paid now: Rs ${o.payment.paidNow.toLocaleString("en-IN")} by ${walletName(o.payment.wallet)}, transaction ID ${o.payment.txn}`) : "Paid now: nothing",
+    o.payment.due > 0 ? `Cash on delivery: Rs ${o.payment.due.toLocaleString("en-IN")}` : "Cash on delivery: nothing, fully paid"
+  ].filter((line, i, arr) => !(line === "" && arr[i - 1] === "")).join("\n");
+
+  const renderConfirm = (o, outcome = "") => {
+    const manualPay = o.payment.paidNow > 0 && o.payment.gateway !== "khalti";
+    const msg = waMessage(o) + (manualPay ? `
+
+${t("wa_paid_line", { amt: `Rs ${o.payment.paidNow.toLocaleString("en-IN")}`, w: walletName(o.payment.wallet) })}` : "");
+    const banner = outcome === "success" ? `<div class="note success">${icon("check")}<span>${t("khalti_paid")}</span></div>`
+      : outcome === "pending" ? `<div class="note accent">${icon("info")}<span>${t("khalti_pending")}</span></div>`
+      : outcome === "failed" ? `<div class="note danger">${icon("info")}<span>${t("khalti_failed")}</span><button class="btn btn-secondary btn-sm" type="button" id="retry-pay">${t("khalti_retry")}</button></div>` : "";
+    const n = o.items.reduce((s, i) => s + i.qty, 0);
+    root.innerHTML = `
+<div class="wrap narrow">
+  <div class="confirm" style="padding-top:48px">
+    <div>
+      <p class="eyebrow">${t("almost_done")}</p>
+      <h1 style="margin-top:10px">${t("order_saved")}</h1>
+      <div class="order-id"><span>${o.id}</span><button class="text-btn" type="button" id="copy-id">${t("copy")}</button></div>
+    </div>
+    ${banner}
+    <div class="wa-card">
+      <h2>${t(manualPay ? "paid_step" : "last_step")}</h2>
+      <p>${t(manualPay ? "paid_step_d" : "last_step_d")}</p>
+      <div class="wa-preview">${esc(msg)}</div>
+      <a class="btn btn-wa btn-block" href="${waLink(msg)}" target="_blank" rel="noopener">${icon("chat")}<span>${t(manualPay ? "i_paid" : "send_wa")}</span></a>
+      <p class="muted small">${t("wa_fallback", { phone: settings.phone, id: o.id })}</p>
+    </div>
+    <div class="box">
+      <h3>${t("next_title")}</h3>
+      <ol class="timeline">
+        <li class="done"><span class="t-dot">${icon("check")}</span><div><div class="t-title">${t("tl_saved")}</div><div class="t-sub">${t("tl_saved_d", { n, amt: rs(o.total) })}</div></div></li>
+        <li class="now"><span class="t-dot">${icon("shield")}</span><div><div class="t-title">${t("tl_check")}</div><div class="t-sub">${o.payment.paidNow > 0 ? t("tl_check_d", { amt: rs(o.payment.paidNow), id: o.id }) : ""}</div></div></li>
+        <li class="todo"><span class="t-dot">${icon("box")}</span><div><div class="t-title">${t("tl_ncm")}</div><div class="t-sub">${t("tl_ncm_d")}</div></div></li>
+        <li class="todo"><span class="t-dot">${icon("truck")}</span><div><div class="t-title">${o.location.type === "home" ? t("tl_home") : esc(t("tl_branch", { p: o.location.name }))}</div><div class="t-sub">${o.payment.due > 0 ? t("tl_cash", { amt: rs(o.payment.due) }) : t("tl_paid")}</div></div></li>
+      </ol>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">${GT.server && readToken(o.id) && settings.bills_enabled ? `<a class="btn btn-secondary" href="/invoice/${encodeURIComponent(o.id)}?token=${encodeURIComponent(readToken(o.id))}" target="_blank" rel="noopener noreferrer">${icon("download")}<span>${t("dl_bill")}</span></a>` : ""}<a class="btn btn-primary" href="/track#${o.id}">${t("track_this")}</a><a class="btn btn-secondary" href="/products">${t("keep_shopping")}</a></div>
+  </div>
+</div>`;
+    document.getElementById("copy-id").addEventListener("click", (e) => copyText(o.id, e.currentTarget));
+    document.getElementById("retry-pay")?.addEventListener("click", async (e) => {
+      e.currentTarget.disabled = true;
+      try {
+        const pay = await GT.api("/api/payments/khalti/initiate", { method: "POST", body: { order_id: o.id, token: readToken(o.id) } });
+        location.href = pay.payment_url;
+      } catch (err) { GT.toast(err.message); e.currentTarget.disabled = false; }
+    });
+  };
+
+  const readToken = (id) => { try { return sessionStorage.getItem(tokenKey(id)) || localStorage.getItem(tokenKey(id)) || ""; } catch { return ""; } };
+  const returned = new URLSearchParams(location.search);
+  const returnedId = returned.get("order") || "";
+  if (GT.server && /^GT-\d{6}-\d{4}$/.test(returnedId) && readToken(returnedId)) {
+    root.innerHTML = `<div class="wrap narrow section"><div class="skeleton-stack"><div class="skeleton" style="height:40px;width:60%"></div><div class="skeleton" style="height:180px"></div></div></div>`;
+    const local = db.orders().find((x) => x.id === returnedId) || {};
+    const token = readToken(returnedId);
+    const finish = (res, outcome) => {
+      const o = { ...local, ...res.order, payment: { ...(local.payment || {}), ...res.order.payment } };
+      const orders = db.orders().filter((x) => x.id !== o.id);
+      orders.unshift(o);
+      db.saveOrders(orders);
+      renderConfirm(o, outcome);
+      history.replaceState(null, "", "/checkout");
+    };
+    const outcome = returned.get("payment");
+    (outcome === "success" ? GT.api(`/api/orders/${returnedId}?token=${encodeURIComponent(token)}`).then((r) => finish(r, "success"))
+      : GT.api("/api/payments/khalti/verify", { method: "POST", body: { order_id: returnedId, token } }).then((r) => finish(r, r.payment)))
+      .catch(() => { root.innerHTML = ""; renderForm(); GT.toast(t("khalti_check_failed")); });
+  } else {
+    renderForm();
+  }
+})();
+</script>
+</body>
+</html>

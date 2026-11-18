@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GifToyz Nepal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Shop teddies, plush toys and tumblers online in Nepal. Pay by eSewa, bank QR or cash on delivery. Delivery to 300+ places with Nepal Can Move.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F86808">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"GifToyz Nepal","telephone":"+977-9709119177","areaServed":"Nepal","sameAs":["https://www.instagram.com/giftoyz.np/"],"currenciesAccepted":"NPR"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=d6f011a816">
+<script>try{var gt=JSON.parse(localStorage.getItem("gt_theme"));document.documentElement.dataset.theme=gt==="dark"?"dark":"light";var gl=JSON.parse(localStorage.getItem("gt_lang"));document.documentElement.lang=gl==="ne"?"ne":"en"}catch(e){}</script>
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+  <section class="promo" id="promo" aria-roledescription="carousel" hidden></section>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow" data-i18n="hero_eyebrow"></p>
+        <h1 data-i18n="hero_title"></h1>
+        <div class="sell-box">
+          <h2 data-i18n="sell_title"></h2>
+          <ul id="sell-list"></ul>
+          <p><span data-icon="truck"></span><span data-i18n="hero_sub"></span></p>
+        </div>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/products"><span data-i18n="hero_cta"></span><span data-icon="arrow"></span></a>
+        </div>
+      </div>
+      <div class="hero-media" id="hero-media"></div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="trust-row" id="trust"></div></div>
+
+  <section class="section" id="shop" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2 data-i18n="home_featured"></h2><a class="text-link" id="shop-more" href="/products"><span data-i18n="see_more"></span><span data-icon="arrow"></span></a></div>
+      <div class="pills cat-pills" id="cats" role="group" hidden></div>
+      <div class="grid" id="featured"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head"><h2 data-i18n="steps_title"></h2><a class="text-link" href="/help#how-to-order"><span data-i18n="f_how"></span><span data-icon="arrow"></span></a></div>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><h3 data-i18n="step1_t"></h3><p data-i18n="step1_d"></p></div>
+        <div class="step"><span class="step-n">2</span><h3 data-i18n="step2_t"></h3><p data-i18n="step2_d"></p></div>
+        <div class="step"><span class="step-n">3</span><h3 data-i18n="step3_t"></h3><p data-i18n="step3_d"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-band">
+        <div><h2 data-i18n="insta_title"></h2><p data-i18n="insta_sub"></p></div>
+        <a class="btn btn-ig" id="insta-btn" target="_blank" rel="noopener"><span data-icon="camera"></span><span data-i18n="insta_btn"></span></a>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="site-footer"></div>
+<script src="data.js?v=00da6c9fd9"></script>
+<script src="i18n.js?v=c80b1dab0c"></script>
+<script src="app.js?v=e068ee5b53"></script>
+<script>
+(() => {
+  const { SEED, t, esc, icon, media, productCard, products, catName, productUrl, pName, db, hydrate } = GT;
+  GT.init("home");
+  document.querySelectorAll("[data-icon]").forEach((el) => (el.outerHTML = icon(el.dataset.icon)));
+  (() => {
+    const s = db.settings();
+    const banners = (s.banners || []).filter((b) => b && b.image && b.image.src);
+    const host = document.getElementById("promo");
+    if (!banners.length) return;
+    const esc = GT.esc, L = GT.L;
+    const set = (img, ext) => (img.widths || [800, 1600, 2400]).map((w) => `${esc(img.src)}-${w}.${ext} ${w}w`).join(", ");
+    const sources = (img, media) => ["avif", "webp"].map((ext) => `<source type="image/${ext}" srcset="${set(img, ext)}" sizes="(max-width: 1240px) 100vw, 1240px"${media ? ` media="${media}"` : ""}>`).join("");
+    const picture = (b, i) => `<picture>${b.mobile ? sources(b.mobile, "(max-width: 640px)") + `<source srcset="${set(b.mobile, "jpg")}" sizes="100vw" media="(max-width: 640px)">` : ""}${sources(b.image)}<img src="${esc(b.image.src)}-1600.jpg" srcset="${set(b.image, "jpg")}" sizes="(max-width: 1240px) 100vw, 1240px" width="${Number(b.image.w)}" height="${Number(b.image.h)}" alt="${esc(b.alt || L(b.title_en, b.title_ne) || "GifToyz announcement")}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"></picture>`;
+    const external = (link) => /^https:/.test(link);
+    const slide = (b, i) => {
+      const title = L(b.title_en, b.title_ne), text = L(b.text_en, b.text_ne), cta = L(b.cta_en, b.cta_ne);
+      const attrs = b.link ? `href="${esc(b.link)}"${external(b.link) ? ' target="_blank" rel="noopener"' : ""}` : "";
+      const media = b.link ? `<a class="promo-media" ${attrs} tabindex="${title || text ? -1 : 0}" ${title || text ? 'aria-hidden="true"' : ""}>${picture(b, i)}</a>` : `<div class="promo-media">${picture(b, i)}</div>`;
+      const caption = title || text || (cta && b.link) ? `<div class="promo-caption"><div>${title ? `<strong>${esc(title)}</strong>` : ""}${text ? `<span>${esc(text)}</span>` : ""}</div>${b.link ? `<a class="btn btn-primary btn-sm" ${attrs}>${esc(cta || t("promo_more"))}</a>` : ""}</div>` : "";
+      return `<div class="promo-slide" role="group" aria-roledescription="slide" aria-label="${i + 1} / ${banners.length}">${media}${caption}</div>`;
+    };
+    host.setAttribute("aria-label", t("promo_label"));
+    host.innerHTML = `<div class="wrap"><div class="promo-frame"><div class="promo-track" id="promo-track" tabindex="-1">${banners.map(slide).join("")}</div>
+      ${banners.length > 1 ? `<button class="promo-nav prev" type="button" aria-label="${esc(t("promo_prev"))}">${icon("chevron-left")}</button><button class="promo-nav next" type="button" aria-label="${esc(t("promo_next"))}">${icon("chevron-right")}</button>` : ""}</div>
+      ${banners.length > 1 ? `<div class="promo-dots" role="group" aria-label="${esc(t("promo_label"))}">${banners.map((_, i) => `<button type="button" data-go="${i}" aria-label="${i + 1} / ${banners.length}" aria-current="${i === 0}"></button>`).join("")}</div>` : ""}</div>`;
+    host.hidden = false;
+    if (banners.length < 2) return;
+    const track = document.getElementById("promo-track");
+    const dots = [...host.querySelectorAll("[data-go]")];
+    let current = 0, timer = null;
+    const paintDots = () => dots.forEach((d, j) => d.setAttribute("aria-current", String(j === current)));
+    const go = (i) => {
+      current = (i + banners.length) % banners.length;
+      paintDots();
+      const target = track.clientWidth * current;
+      track.scrollTo({ left: target, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      setTimeout(() => { if (Math.abs(track.scrollLeft - target) > 4) track.scrollLeft = target; }, 700);
+    };
+    track.addEventListener("scroll", () => {
+      const i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+      if (i !== current) { current = i; paintDots(); }
+    }, { passive: true });
+    dots.forEach((d) => d.addEventListener("click", () => { go(Number(d.dataset.go)); restart(); }));
+    host.querySelector(".prev").addEventListener("click", () => { go(current - 1); restart(); });
+    host.querySelector(".next").addEventListener("click", () => { go(current + 1); restart(); });
+    const stop = () => { clearInterval(timer); timer = null; };
+    const start = () => { if (!timer && !matchMedia("(prefers-reduced-motion: reduce)").matches) timer = setInterval(() => go(current + 1), Math.max(3, Number(s.banner_seconds) || 6) * 1000); };
+    const restart = () => { stop(); start(); };
+    host.addEventListener("mouseenter", stop);
+    host.addEventListener("mouseleave", start);
+    host.addEventListener("focusin", stop);
+    host.addEventListener("focusout", start);
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+    addEventListener("resize", () => track.scrollTo({ left: track.clientWidth * current }));
+    start();
+  })();
+  document.getElementById("insta-btn").href = `https://www.instagram.com/${db.settings().instagram}/`;
+  const list = products();
+  const picked = (db.settings().hero || []).map((h) => ({ p: list.find((x) => x.id === h.id), label: h.label })).filter((h) => h.p);
+  const auto = list.filter((p) => !picked.some((h) => h.p === p)).sort((a, b) => (b.stock > 0) - (a.stock > 0) || (b.badge === "best") - (a.badge === "best")).map((p) => ({ p, label: "" }));
+  document.getElementById("hero-media").innerHTML = [...picked, ...auto].slice(0, 3).map(({ p, label }) => `<a class="tile" href="${productUrl(p)}" aria-label="${esc(pName(p))}">${media(p, { eager: true })}${label ? `<span class="tile-tag">${esc(t(`badge_${label}`))}</span>` : ""}<span class="tile-label">${esc(pName(p))}</span></a>`).join("");
+  const rating = window.GT_RATING;
+  const happy = Number(db.settings().happy_customers) || 0;
+  const people = rating && rating.count >= 5
+    ? ["star", t("trust_rating", { avg: rating.average }), t("trust_rating_d", { n: rating.count })]
+    : happy > 0 ? ["heart", t("trust_happy", { n: happy.toLocaleString() }), t("trust_happy_d")] : ["shield", t("trust_check"), t("trust_check_d")];
+  document.getElementById("trust").innerHTML = [people, ["truck", t("trust_delivery"), t("trust_delivery_d")], ["tag", t("trust_fair"), t("trust_fair_d")], ["qr", t("trust_pay"), t("trust_pay_d")]]
+    .map(([i, a, b]) => `<div class="trust-item"><span class="ti">${icon(i)}</span><div><strong>${esc(a)}</strong><span>${esc(b)}</span></div></div>`).join("");
+  document.getElementById("sell-list").innerHTML = t("sell_items").split("|").map((x) => `<li>${esc(x)}</li>`).join("");
+  const loved = list.filter((p) => p.stock > 0).sort((a, b) => (b.badge === "best") - (a.badge === "best") || (b.compare > b.price) - (a.compare > a.price));
+  const cats = SEED.categories.filter((c) => loved.some((p) => p.cat === c.id));
+  const shop = document.getElementById("shop");
+  const pills = document.getElementById("cats");
+  const showCat = (cat) => {
+    pills.innerHTML = [["all", t("f_all")], ...cats.map((c) => [c.id, catName(c)])].map(([id, label]) => `<button type="button" class="pill" data-cat="${esc(id)}" aria-pressed="${id === cat}">${esc(label)}</button>`).join("");
+    document.getElementById("featured").innerHTML = loved.filter((p) => cat === "all" || p.cat === cat).slice(0, 8).map(productCard).join("");
+    document.getElementById("shop-more").href = cat === "all" ? "/products" : `/products#${cat}`;
+    hydrate(shop);
+  };
+  pills.setAttribute("aria-label", t("f_category"));
+  pills.hidden = cats.length < 2;
+  pills.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-cat]");
+    if (!btn || btn.getAttribute("aria-pressed") === "true") return;
+    showCat(btn.dataset.cat);
+    pills.querySelector('[aria-pressed="true"]').focus({ preventScroll: true });
+  });
+  shop.hidden = !loved.length;
+  showCat("all");
+  hydrate();
+})();
+</script>
+</body>
+</html>

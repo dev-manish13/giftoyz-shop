@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Help and delivery rates | GifToyz Nepal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="How to order from GifToyz, payment options, Nepal Can Move delivery rates for 300+ places, tracking, returns, privacy and terms.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F86808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=d6f011a816">
+<script>try{var gt=JSON.parse(localStorage.getItem("gt_theme"));document.documentElement.dataset.theme=gt==="dark"?"dark":"light";var gl=JSON.parse(localStorage.getItem("gt_lang"));document.documentElement.lang=gl==="ne"?"ne":"en"}catch(e){}</script>
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <h1 data-i18n="help_title"></h1>
+      <p class="lead" data-i18n="help_lead"></p>
+    </div>
+  </section>
+  <div class="wrap docs">
+    <nav class="toc" id="toc" aria-label="On this page"></nav>
+    <div class="doc-body">
+      <section class="doc-section" id="how-to-order"><h2 data-i18n="toc_order"></h2><ol><li data-i18n="h_order_1"></li><li data-i18n="h_order_2"></li><li data-i18n="h_order_3"></li><li data-i18n="h_order_4"></li><li data-i18n="h_order_5"></li></ol><p data-i18n="h_order_chat"></p></section>
+      <section class="doc-section" id="payment"><h2 data-i18n="toc_payment"></h2><h3 data-i18n="h_pay_full_t"></h3><p data-i18n="h_pay_full"></p><h3 data-i18n="h_pay_cod_t"></h3><p data-i18n="h_pay_cod"></p><p data-i18n="h_pay_check"></p><div class="note accent" id="pay-warn"></div></section>
+      <section class="doc-section" id="delivery">
+        <h2 data-i18n="toc_delivery"></h2><p data-i18n="h_rates"></p>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><input class="input" id="rate-q" type="search" style="max-width:380px" data-i18n-ph="rate_search" aria-label="Search places"><span class="muted small num" id="rate-count" role="status"></span></div>
+        <div class="table-wrap"><table class="data"><thead><tr><th data-i18n="rate_place"></th><th data-i18n="rate_district"></th><th class="r" data-i18n="rate_home"></th><th class="r" data-i18n="rate_branch"></th></tr></thead><tbody id="rate-body"></tbody></table></div>
+        <p class="muted small" data-i18n="h_rates_note"></p>
+      </section>
+      <section class="doc-section" id="tracking"><h2 data-i18n="toc_tracking"></h2><p data-i18n="h_tracking"></p><div><a class="text-link" href="/track" data-i18n="track"></a></div></section>
+      <section class="doc-section" id="returns"><h2 data-i18n="toc_returns"></h2><p data-i18n="h_returns_1"></p><p data-i18n="h_returns_2"></p></section>
+      <section class="doc-section" id="faq"><h2 data-i18n="toc_faq"></h2><div id="faq-list"></div></section>
+      <section class="doc-section" id="privacy"><h2 data-i18n="toc_privacy"></h2><p data-i18n="h_privacy_1"></p><p data-i18n="h_privacy_2"></p></section>
+      <section class="doc-section" id="terms"><h2 data-i18n="toc_terms"></h2><ul><li data-i18n="h_terms_1"></li><li data-i18n="h_terms_2"></li><li data-i18n="h_terms_3"></li><li data-i18n="h_terms_4"></li></ul></section>
+    </div>
+  </div>
+</main>
+<div id="site-footer"></div>
+<script src="data.js?v=00da6c9fd9"></script>
+<script src="i18n.js?v=c80b1dab0c"></script>
+<script src="app.js?v=e068ee5b53"></script>
+<script>
+(() => {
+  const { t, esc, rs, icon, db } = GT;
+  GT.init("help");
+  const toc = [["how-to-order", "toc_order"], ["payment", "toc_payment"], ["delivery", "toc_delivery"], ["tracking", "toc_tracking"], ["returns", "toc_returns"], ["faq", "toc_faq"], ["privacy", "toc_privacy"], ["terms", "toc_terms"]];
+  document.getElementById("toc").innerHTML = toc.map(([id, k]) => `<a href="#${id}">${t(k)}</a>`).join("");
+  document.getElementById("pay-warn").innerHTML = `${icon("shield")}<span>${esc(t("h_pay_warn", { phone: db.settings().phone }))}</span>`;
+  document.getElementById("faq-list").innerHTML = [1, 2, 3, 4].map((n) => `<details class="acc"><summary>${t(`faq${n}_q`)}${icon("plus")}</summary><div class="acc-body"><p>${t(`faq${n}_a`)}</p></div></details>`).join("");
+  const rows = db.rates().slice().sort((a, b) => a.name.localeCompare(b.name));
+  const body = document.getElementById("rate-body"), count = document.getElementById("rate-count");
+  const render = (q) => {
+    const query = q.trim().toLowerCase();
+    const m = rows.filter((r) => !query || r.name.toLowerCase().includes(query) || (r.district || "").toLowerCase().includes(query));
+    body.innerHTML = m.length ? m.map((r) => `<tr><td>${esc(r.name)}</td><td class="muted">${esc(r.district || "")}</td><td class="r">${rs(r.home)}</td><td class="r">${rs(r.branch)}</td></tr>`).join("") : `<tr><td colspan="4" class="muted">${esc(t("rate_none", { q }))}</td></tr>`;
+    count.textContent = t("rate_count", { n: m.length, t: rows.length });
+  };
+  document.getElementById("rate-q").addEventListener("input", (e) => render(e.target.value));
+  render("");
+  const links = [...document.querySelectorAll("#toc a")];
+  const secs = links.map((a) => document.querySelector(a.getAttribute("href")));
+  const spy = () => { let c = 0; secs.forEach((s, i) => { if (s.getBoundingClientRect().top < 140) c = i; }); links.forEach((a, i) => a.classList.toggle("active", i === c)); };
+  addEventListener("scroll", spy, { passive: true }); spy();
+})();
+</script>
+</body>
+</html>

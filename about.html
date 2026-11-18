@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About | GifToyz Nepal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="GifToyz Nepal is a small gift and toy shop that checks and packs every order by hand and delivers across Nepal.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F86808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=d6f011a816">
+<script>try{var gt=JSON.parse(localStorage.getItem("gt_theme"));document.documentElement.dataset.theme=gt==="dark"?"dark":"light";var gl=JSON.parse(localStorage.getItem("gt_lang"));document.documentElement.lang=gl==="ne"?"ne":"en"}catch(e){}</script>
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+  <section class="wrap about-hero">
+    <div>
+      <p class="eyebrow" data-i18n="about_eyebrow"></p>
+      <h1 data-i18n="about_title"></h1>
+      <p class="lead" data-i18n="about_lead"></p>
+    </div>
+    <figure class="about-cover"><picture>
+      <source type="image/avif" srcset="about-cover-600.avif 600w, about-cover-1024.avif 1024w" sizes="(max-width: 880px) 100vw, 560px">
+      <source type="image/webp" srcset="about-cover-600.webp 600w, about-cover-1024.webp 1024w" sizes="(max-width: 880px) 100vw, 560px">
+      <img src="about-cover-1024.jpg" srcset="about-cover-600.jpg 600w, about-cover-1024.jpg 1024w" sizes="(max-width: 880px) 100vw, 560px" width="1024" height="1024" fetchpriority="high" decoding="async" alt="GifToyz gifts and lifestyle: teddies, Stitch and Hello Kitty plush toys, tumblers and gift boxes on a wooden table">
+    </picture></figure>
+  </section>
+  <section class="section surface-band">
+    <div class="wrap">
+      <div class="section-head"><h2 data-i18n="values_title"></h2></div>
+      <div class="values" id="values"></div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap">
+      <div class="prose">
+        <h2 data-i18n="journey_title"></h2>
+        <p data-i18n="journey_1"></p>
+        <p data-i18n="journey_2"></p>
+        <p data-i18n="journey_3"></p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:36px">
+        <a class="btn btn-primary" href="/products" data-i18n="hero_cta"></a>
+        <a class="btn btn-secondary" href="/contact" data-i18n="nav_contact"></a>
+      </div>
+    </div>
+  </section>
+</main>
+<div id="site-footer"></div>
+<script src="data.js?v=00da6c9fd9"></script>
+<script src="i18n.js?v=c80b1dab0c"></script>
+<script src="app.js?v=e068ee5b53"></script>
+<script>
+(() => {
+  const { t, icon, artGroup } = GT;
+  GT.init("about");
+  document.getElementById("values").innerHTML = [["gift", "v1"], ["shield", "v2"], ["chat", "v3"]].map(([i, k]) => `<div class="value"><span class="ti">${icon(i)}</span><h3>${t(k + "_t")}</h3><p>${t(k + "_d")}</p></div>`).join("");
+})();
+</script>
+</body>
+</html>

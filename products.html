@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shop gifts | GifToyz Nepal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Browse teddies, plush toys and tumblers. Prices in NPR, live stock and delivery to 300+ places across Nepal.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#F86808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=d6f011a816">
+<script>try{var gt=JSON.parse(localStorage.getItem("gt_theme"));document.documentElement.dataset.theme=gt==="dark"?"dark":"light";var gl=JSON.parse(localStorage.getItem("gt_lang"));document.documentElement.lang=gl==="ne"?"ne":"en"}catch(e){}</script>
+</head>
+<body>
+<div id="site-header"></div>
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/" data-i18n="crumb_home"></a><span>/</span><span id="crumb"></span></nav>
+      <h1 id="shop-title"></h1>
+      <p class="lead" id="shop-lead"></p>
+    </div>
+  </section>
+  <div class="wrap shop">
+    <aside class="filters" aria-label="Filters">
+      <div class="filter-group"><h3 data-i18n="f_category"></h3><div class="filter-list" id="f-cat"></div></div>
+      <div class="filter-group" id="g-occ" hidden><h3 data-i18n="f_occasion"></h3><div class="filter-list" id="f-occ"></div></div>
+      <div class="filter-group"><h3 data-i18n="f_price"></h3><div class="filter-list" id="f-price"></div></div>
+      <label class="check"><input type="checkbox" id="f-stock"><span data-i18n="f_instock"></span></label>
+    </aside>
+    <section style="min-width:0">
+      <div class="m-filters" id="m-filters"></div>
+      <div class="toolbar">
+        <span class="count" id="count" role="status"></span>
+        <select class="select" id="sort" aria-label="Sort"></select>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="load-more"><button class="btn btn-secondary" type="button" id="more" hidden></button></div>
+    </section>
+  </div>
+</main>
+<div id="site-footer"></div>
+<script src="data.js?v=00da6c9fd9"></script>
+<script src="i18n.js?v=c80b1dab0c"></script>
+<script src="app.js?v=e068ee5b53"></script>
+<script>
+(() => {
+  const { SEED, t, esc, art, productCard, products, catName, occName, searchProducts, hydrate } = GT;
+  GT.init("shop");
+  const PAGE = 12;
+  const prices = [
+    { id: "all", key: "f_any_price", test: () => true },
+    { id: "u1000", key: "p_u1000", test: (p) => p.price < 1000 },
+    { id: "mid", key: "p_mid", test: (p) => p.price >= 1000 && p.price <= 2500 },
+    { id: "o2500", key: "p_o2500", test: (p) => p.price > 2500 }
+  ];
+  const sorts = [["featured", "sort_featured"], ["price-asc", "sort_low"], ["price-desc", "sort_high"], ["offers", "sort_offers"]];
+  document.getElementById("sort").innerHTML = sorts.map(([v, k]) => `<option value="${v}">${t(k)}</option>`).join("");
+  const state = { cat: "all", occ: "all", price: "all", stock: false, sort: "featured", q: "", shown: PAGE };
+
+  const fromHash = () => {
+    const h = decodeURIComponent(location.hash.slice(1)) || new URLSearchParams(location.search).get("cat") || "";
+    Object.assign(state, { cat: "all", occ: "all", q: "", shown: PAGE });
+    if (SEED.categories.some((c) => c.id === h)) state.cat = h;
+    else if (SEED.occasions.some((o) => o.id === h)) state.occ = h;
+    else if (h === "search") { try { state.q = sessionStorage.getItem("gt_q") || ""; } catch {} }
+  };
+  const list = () => {
+    let items = state.q ? searchProducts(state.q).products : products();
+    items = items.filter((p) => (state.cat === "all" || p.cat === state.cat) && (state.occ === "all" || p.occasions.includes(state.occ)) && prices.find((x) => x.id === state.price).test(p) && (!state.stock || p.stock > 0));
+    const by = {
+      featured: (a, b) => (b.stock > 0) - (a.stock > 0) || (b.badge === "best") - (a.badge === "best") || a.id - b.id,
+      "price-asc": (a, b) => a.price - b.price,
+      "price-desc": (a, b) => b.price - a.price,
+      offers: (a, b) => ((b.compare || 0) - b.price) - ((a.compare || 0) - a.price)
+    };
+    if (!state.q || state.sort !== "featured") items = items.slice().sort(by[state.sort]);
+    return items;
+  };
+  const fbtn = (group, id, label, n) => `<button type="button" data-group="${group}" data-id="${id}" aria-pressed="${state[group] === id}"><span>${esc(label)}</span>${n !== undefined ? `<span class="n">${n}</span>` : ""}</button>`;
+  const render = () => {
+    const all = products();
+    document.getElementById("f-cat").innerHTML = fbtn("cat", "all", t("f_all"), all.length) + GT.shopCategories().map((c) => fbtn("cat", c.id, catName(c), all.filter((p) => p.cat === c.id).length)).join("");
+    document.getElementById("g-occ").hidden = !SEED.occasions.length;
+    document.getElementById("f-occ").innerHTML = fbtn("occ", "all", t("f_any_occ")) + SEED.occasions.map((o) => fbtn("occ", o.id, occName(o), all.filter((p) => p.occasions.includes(o.id)).length)).join("");
+    document.getElementById("f-price").innerHTML = prices.map((x) => fbtn("price", x.id, t(x.key))).join("");
+    document.getElementById("f-stock").checked = state.stock;
+    document.getElementById("sort").value = state.sort;
+    document.getElementById("m-filters").innerHTML = [["all", t("f_all")], ...GT.shopCategories().map((c) => [c.id, catName(c)]), ...SEED.occasions.map((o) => [o.id, occName(o)])]
+      .map(([id, label]) => {
+        const isCat = id === "all" || SEED.categories.some((c) => c.id === id);
+        return `<button class="pill" type="button" data-chip="${id}" aria-pressed="${isCat ? state.cat === id && state.occ === "all" : state.occ === id}">${esc(label)}</button>`;
+      }).join("");
+    const cat = SEED.categories.find((c) => c.id === state.cat);
+    const occ = SEED.occasions.find((o) => o.id === state.occ);
+    const title = state.q ? t("results_for", { q: state.q }) : cat ? catName(cat) : occ ? occName(occ) : t("shop_title");
+    document.getElementById("shop-title").textContent = title;
+    document.getElementById("crumb").textContent = title;
+    document.title = `${title} | GifToyz Nepal`;
+    document.getElementById("shop-lead").innerHTML = state.q ? `<button class="text-btn" type="button" id="clear-q">${t("clear_search")}</button>` : esc(t("shop_sub"));
+    document.getElementById("clear-q")?.addEventListener("click", () => { try { sessionStorage.removeItem("gt_q"); } catch {} history.replaceState(null, "", location.pathname); fromHash(); render(); });
+
+    const items = list();
+    const grid = document.getElementById("grid");
+    const more = document.getElementById("more");
+    document.getElementById("count").textContent = items.length === 1 ? t("n_gift") : t("n_gifts", { n: items.length });
+    if (!items.length) {
+      grid.style.display = "block";
+      grid.innerHTML = `<div class="empty"><div class="empty-art">${art("teddy", "#C47A3D")}</div><h3>${t("empty_title")}</h3><p>${t("empty_sub")}</p><button class="btn btn-primary" type="button" id="reset">${t("clear_filters")}</button></div>`;
+      document.getElementById("reset").addEventListener("click", () => { Object.assign(state, { cat: "all", occ: "all", price: "all", stock: false, q: "", shown: PAGE }); history.replaceState(null, "", location.pathname); render(); });
+      more.hidden = true;
+      return;
+    }
+    grid.style.display = "";
+    grid.innerHTML = items.slice(0, state.shown).map(productCard).join("");
+    more.hidden = items.length <= state.shown;
+    more.textContent = t("show_more", { n: items.length - state.shown });
+    hydrate(grid);
+  };
+  document.querySelector(".filters").addEventListener("click", (e) => { const b = e.target.closest("button[data-group]"); if (b) { state[b.dataset.group] = b.dataset.id; state.shown = PAGE; render(); } });
+  document.getElementById("m-filters").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-chip]"); if (!b) return;
+    const id = b.dataset.chip;
+    if (id === "all" || SEED.categories.some((c) => c.id === id)) { state.cat = id; state.occ = "all"; } else { state.occ = id; state.cat = "all"; }
+    state.shown = PAGE; render();
+  });
+  document.getElementById("f-stock").addEventListener("change", (e) => { state.stock = e.target.checked; render(); });
+  document.getElementById("sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
+  document.getElementById("more").addEventListener("click", () => { state.shown += PAGE; render(); });
+  addEventListener("hashchange", () => { fromHash(); render(); });
+  fromHash(); render();
+})();
+</script>
+</body>
+</html>
