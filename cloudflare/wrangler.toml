@@ -1,0 +1,45 @@
+name = "giftoyz"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+preview_urls = false
+
+routes = [
+  { pattern = "giftoyz.com", custom_domain = true },
+  { pattern = "www.giftoyz.com", custom_domain = true },
+]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+html_handling = "none"
+not_found_handling = "none"
+
+[vars]
+PUBLIC_BASE_URL = "https://giftoyz.com"
+INDEXABLE = "true"
+NCM_BASE_URL = "https://portal.nepalcanmove.com"
+NCM_PICKUP_BRANCH = "NEWROAD"
+NCM_ALLOW_CREATE = "true"
+NCM_RATES_HOURS = "24"
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "giftoyz-db"
+database_id = "87d021da-36a0-4f77-b594-eb37e9edf5c8"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "giftoyz-media"
+
+[images]
+binding = "IMAGES"
+
+[triggers]
+crons = ["*/15 * * * *", "7,22,37,52 * * * *"]

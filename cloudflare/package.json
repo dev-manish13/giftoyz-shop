@@ -1,0 +1,27 @@
+{
+  "name": "giftoyz-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "assets": "node scripts/assets.mjs",
+    "dev": "npm run assets && wrangler dev",
+    "deploy": "npm run assets && wrangler deploy",
+    "test": "npm run assets && vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.13.17",
+    "zod": "^4.6.7"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "workerd": true
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.6.1",
+    "@cloudflare/workers-types": "^5.20261109.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.159.0"
+  }
+}
