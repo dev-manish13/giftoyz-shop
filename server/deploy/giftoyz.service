@@ -1,0 +1,19 @@
+[Unit]
+Description=GifToyz shop
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=giftoyz
+WorkingDirectory=/srv/giftoyz/server
+ExecStart=/srv/giftoyz/server/.venv/bin/uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8080 --no-server-header --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/srv/giftoyz/server/data /srv/giftoyz/server/backups /srv/giftoyz/media
+
+[Install]
+WantedBy=multi-user.target

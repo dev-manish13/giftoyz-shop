@@ -1,0 +1,11 @@
+# Caddy gets and renews a free HTTPS certificate for this domain on its own.
+# Replace giftoyz.com.np with your domain, point the domain's DNS A record at the server, then:
+#   sudo cp Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
+
+giftoyz.com.np, www.giftoyz.com.np {
+	encode zstd gzip
+	request_body {
+		max_size 26MB
+	}
+	reverse_proxy 127.0.0.1:8080
+}

@@ -1,0 +1,193 @@
+[
+  {
+    "itemId": "GFT-TUM-001", "id": 1001, "slug": "hello-kitty-steel-tumbler-handle-pink",
+    "name": "Hello Kitty Steel Tumbler with Handle, Pink",
+    "ne_name": "ह्यान्डलसहितको हेलो किटी स्टिल टम्बलर, गुलाबी",
+    "cat": "tumblers", "art": "tumbler", "colors": ["pink"], "badge": "gift",
+    "occasions": ["for-her", "for-kids", "birthday", "just-because"],
+    "blurb": "A pink Hello Kitty tumbler with a steel rim, flip-top lid and a sturdy carry handle. Arrives in a printed Hello Kitty gift bag.",
+    "ne_blurb": "स्टिलको किनारा, फ्लिप-टप ढक्कन र बलियो ह्यान्डलसहितको गुलाबी हेलो किटी टम्बलर। छापिएको हेलो किटी गिफ्ट झोलामा आउँछ।",
+    "specs": ["Steel rim with printed body", "Flip-top lid", "Fold-down carry handle", "Comes in a Hello Kitty gift bag"],
+    "ne_specs": ["छापिएको भाग र स्टिलको किनारा", "फ्लिप-टप ढक्कन", "पट्याउन मिल्ने ह्यान्डल", "हेलो किटी गिफ्ट झोलामा आउँछ"],
+    "weight_kg": 0.8,
+    "photos": [
+      {"file": "IMG_6476 2.heic", "kind": "hero", "focus": 0.5, "alt": "Pink Hello Kitty steel tumbler with handle held in hand"},
+      {"file": "IMG_6480 2.heic", "kind": "detail", "focus": 0.45, "alt": "Flip-top lid and carry handle of the Hello Kitty tumbler"},
+      {"file": "IMG_6473 2.heic", "kind": "packaging", "focus": 0.55, "alt": "Hello Kitty tumbler inside its gift bag"}
+    ]
+  },
+  {
+    "itemId": "GFT-TUM-002", "id": 1002, "slug": "hello-kitty-3d-coffee-tumbler-pink",
+    "name": "Hello Kitty 3D Coffee Tumbler, Pink",
+    "ne_name": "हेलो किटी थ्रीडी कफी टम्बलर, गुलाबी",
+    "cat": "tumblers", "art": "tumbler", "colors": ["pink"], "badge": "gift",
+    "occasions": ["for-her", "birthday", "just-because"],
+    "blurb": "A pink coffee tumbler with a raised 3D Hello Kitty on the front and a sip lid. Comes boxed in a Hello Kitty gift bag.",
+    "ne_blurb": "अगाडि उठेको थ्रीडी हेलो किटी र पिउने ढक्कनसहितको गुलाबी कफी टम्बलर। हेलो किटी गिफ्ट झोलामा बाकससहित आउँछ।",
+    "specs": ["Raised 3D Hello Kitty figure", "Sip lid with flip cover", "Comes in a gift box and bag"],
+    "ne_specs": ["उठेको थ्रीडी हेलो किटी", "फ्लिप कभरसहितको पिउने ढक्कन", "गिफ्ट बाकस र झोलामा आउँछ"],
+    "weight_kg": 0.6,
+    "photos": [
+      {"file": "IMG_6487 2.heic", "kind": "hero", "focus": 0.5, "alt": "Pink Hello Kitty 3D coffee tumbler"},
+      {"file": "IMG_6488 2.heic", "kind": "detail", "focus": 0.5, "alt": "Side view of the raised 3D Hello Kitty figure"},
+      {"file": "IMG_6483 2.heic", "kind": "packaging", "focus": 0.5, "alt": "Hello Kitty coffee tumbler in its gift bag"}
+    ]
+  },
+  {
+    "itemId": "GFT-TUM-003", "id": 1003, "slug": "spider-man-3d-coffee-tumbler",
+    "name": "Spider-Man 3D Coffee Tumbler",
+    "ne_name": "स्पाइडर-म्यान थ्रीडी कफी टम्बलर",
+    "cat": "tumblers", "art": "tumbler", "colors": ["cream"], "badge": "gift",
+    "occasions": ["for-him", "for-kids", "birthday"],
+    "blurb": "A cream coffee tumbler with a raised 3D Spider-Man and web print all around. Comes boxed in a Spider-Man gift bag.",
+    "ne_blurb": "उठेको थ्रीडी स्पाइडर-म्यान र वरिपरि जालको छापसहितको क्रिम रङको कफी टम्बलर। स्पाइडर-म्यान गिफ्ट झोलामा बाकससहित आउँछ।",
+    "specs": ["Raised 3D Spider-Man figure", "Sip lid with flip cover", "Comes in a gift box and bag"],
+    "ne_specs": ["उठेको थ्रीडी स्पाइडर-म्यान", "फ्लिप कभरसहितको पिउने ढक्कन", "गिफ्ट बाकस र झोलामा आउँछ"],
+    "weight_kg": 0.6,
+    "photos": [
+      {"file": "IMG_6497 2.heic", "kind": "hero", "focus": 0.48, "alt": "Spider-Man 3D coffee tumbler held in hand"},
+      {"file": "IMG_6498 2.heic", "kind": "detail", "focus": 0.45, "alt": "Close view of the raised Spider-Man figure"},
+      {"file": "IMG_6493 2.heic", "kind": "packaging", "focus": 0.55, "alt": "Spider-Man tumbler in its gift bag"}
+    ]
+  },
+  {
+    "itemId": "GFT-TUM-004", "id": 1004, "slug": "hello-kitty-mini-cup-strap",
+    "name": "Hello Kitty Mini Cup with Strap",
+    "ne_name": "पट्टासहितको हेलो किटी मिनी कप",
+    "cat": "tumblers", "art": "tumbler", "colors": ["pink"], "badge": "new",
+    "occasions": ["for-her", "for-kids", "just-because"],
+    "blurb": "A small pink Hello Kitty cup with a flip lid and a braided wrist strap, easy to carry in a bag. Comes in a Hello Kitty gift bag.",
+    "ne_blurb": "फ्लिप ढक्कन र बाटिएको हात पट्टासहितको सानो गुलाबी हेलो किटी कप, झोलामा बोक्न सजिलो। हेलो किटी गिफ्ट झोलामा आउँछ।",
+    "specs": ["Compact size", "Flip lid", "Braided carry strap", "Comes in a gift box and bag"],
+    "ne_specs": ["सानो आकार", "फ्लिप ढक्कन", "बाटिएको बोक्ने पट्टा", "गिफ्ट बाकस र झोलामा आउँछ"],
+    "weight_kg": 0.5,
+    "photos": [
+      {"file": "IMG_6511 2.heic", "kind": "hero", "focus": 0.52, "alt": "Pink Hello Kitty mini cup with strap"},
+      {"file": "IMG_6518 2.heic", "kind": "detail", "focus": 0.58, "alt": "Flip lid and braided strap of the mini cup"},
+      {"file": "IMG_6505 2.heic", "kind": "packaging", "focus": 0.5, "alt": "Hello Kitty mini cup in its gift bag"}
+    ]
+  },
+  {
+    "itemId": "GFT-PLU-001", "id": 1005, "slug": "stitch-plush",
+    "name": "Stitch Plush",
+    "ne_name": "स्टिच सफ्ट ट्वाय",
+    "cat": "plush", "art": "teddy", "colors": ["blue"], "badge": "best",
+    "occasions": ["for-kids", "for-her", "birthday", "just-because"],
+    "blurb": "A soft, fluffy Stitch with big ears and a light blue tummy. Sits up on its own.",
+    "ne_blurb": "ठूला कान र हल्का नीलो पेटसहितको नरम, फुस्रो स्टिच। आफैं बस्न सक्छ।",
+    "specs": ["Soft plush fabric", "Sits upright", "Embroidered nose and eyes"],
+    "ne_specs": ["नरम कपडा", "आफैं बस्न सक्ने", "सिलाइएका नाक र आँखा"],
+    "weight_kg": 0.5,
+    "photos": [
+      {"file": "IMG_6455 2.heic", "kind": "hero", "focus": 0.66, "alt": "Blue Stitch plush sitting on a ledge"},
+      {"file": "IMG_6456 2.heic", "kind": "lifestyle", "focus": 0.68, "alt": "Stitch plush from the side"}
+    ]
+  },
+  {
+    "itemId": "GFT-PLU-002", "id": 1006, "slug": "kuromi-plush-plaid-dress",
+    "name": "Kuromi Plush, Plaid Dress",
+    "ne_name": "कुरोमी सफ्ट ट्वाय, चेक फ्रक",
+    "cat": "plush", "art": "teddy", "colors": ["black"], "badge": "",
+    "occasions": ["for-her", "for-kids", "birthday"],
+    "blurb": "Kuromi in a pink plaid dress with a big pink bow. Soft, cuddly and gift-ready.",
+    "ne_blurb": "गुलाबी चेक फ्रक र ठूलो गुलाबी रिबनमा कुरोमी। नरम, अँगालो हाल्न मन लाग्ने र उपहार दिन तयार।",
+    "specs": ["Soft plush fabric", "Pink plaid dress", "Pink satin bow"],
+    "ne_specs": ["नरम कपडा", "चेक फ्रक", "गुलाबी साटनको रिबन"],
+    "weight_kg": 0.5,
+    "photos": [
+      {"file": "IMG_6458 2.heic", "kind": "hero", "focus": 0.6, "alt": "Kuromi plush in a pink plaid dress"}
+    ]
+  },
+  {
+    "itemId": "GFT-PLU-003", "id": 1007, "slug": "hello-kitty-plush-blue-gingham",
+    "name": "Hello Kitty Plush, Blue Gingham Dress",
+    "ne_name": "हेलो किटी सफ्ट ट्वाय, नीलो चेक फ्रक",
+    "cat": "plush", "art": "teddy", "colors": ["sky"], "badge": "",
+    "occasions": ["for-her", "for-kids", "birthday"],
+    "blurb": "A white Hello Kitty in a blue gingham dress with a matching lace bow.",
+    "ne_blurb": "नीलो चेक फ्रक र मिल्दो लेस रिबनमा सेतो हेलो किटी।",
+    "specs": ["Soft plush fabric", "Blue gingham dress", "Lace bow on the ear"],
+    "ne_specs": ["नरम कपडा", "नीलो चेक फ्रक", "कानमा लेसको रिबन"],
+    "weight_kg": 0.5,
+    "photos": [
+      {"file": "IMG_6430 2.heic", "kind": "hero", "focus": 0.55, "alt": "Hello Kitty plush in a blue gingham dress"}
+    ]
+  },
+  {
+    "itemId": "GFT-PLU-004", "id": 1008, "slug": "hello-kitty-plush-pink-gingham",
+    "name": "Hello Kitty Plush, Pink Gingham Dress",
+    "ne_name": "हेलो किटी सफ्ट ट्वाय, गुलाबी चेक फ्रक",
+    "cat": "plush", "art": "teddy", "colors": ["pink"], "badge": "",
+    "occasions": ["for-her", "for-kids", "birthday"],
+    "blurb": "A white Hello Kitty in a pink gingham dress with a white collar.",
+    "ne_blurb": "सेतो कलरसहितको गुलाबी चेक फ्रकमा सेतो हेलो किटी।",
+    "specs": ["Soft plush fabric", "Pink gingham dress", "White collar"],
+    "ne_specs": ["नरम कपडा", "गुलाबी चेक फ्रक", "सेतो कलर"],
+    "weight_kg": 0.5,
+    "photos": [
+      {"file": "IMG_6434 2.heic", "kind": "hero", "focus": 0.62, "alt": "Hello Kitty plush in a pink gingham dress"}
+    ]
+  },
+  {
+    "itemId": "GFT-PLU-005", "id": 1009, "slug": "luffy-plush-straw-hat",
+    "name": "Luffy Plush with Straw Hat",
+    "ne_name": "पराल टोपीसहितको लुफी सफ्ट ट्वाय",
+    "cat": "plush", "art": "teddy", "colors": ["yellow"], "badge": "new",
+    "occasions": ["for-him", "for-kids", "birthday"],
+    "blurb": "A grinning Luffy plush with his straw hat, open shirt and blue shorts. A fun pick for anime fans.",
+    "ne_blurb": "पराल टोपी, खुला सर्ट र नीलो हाफ पाइन्टसहित हाँसिरहेको लुफी। एनिमे मन पराउनेलाई रमाइलो उपहार।",
+    "specs": ["Soft plush body", "Fabric straw hat", "Embroidered face"],
+    "ne_specs": ["नरम शरीर", "कपडाको पराल टोपी", "सिलाइएको अनुहार"],
+    "weight_kg": 0.4,
+    "photos": [
+      {"file": "IMG_6468 2.heic", "kind": "hero", "focus": 0.5, "alt": "Luffy plush with straw hat held in hand"},
+      {"file": "IMG_6469 2.heic", "kind": "lifestyle", "focus": 0.5, "alt": "Luffy plush from a slightly different angle"}
+    ]
+  },
+  {
+    "itemId": "GFT-TED-001", "id": 1010, "slug": "teddy-pikachu-costume",
+    "name": "Teddy in Pikachu Costume",
+    "ne_name": "पिकाचु पोसाकमा टेडी",
+    "cat": "teddies", "art": "teddy", "colors": ["yellow"], "badge": "best",
+    "occasions": ["for-kids", "for-her", "birthday", "just-because"],
+    "blurb": "A white teddy dressed in a fluffy yellow Pikachu hoodie with pointed ears and red cheeks.",
+    "ne_blurb": "टुप्पो भएका कान र रातो गालासहितको फुस्रो पहेँलो पिकाचु हुडी लगाएको सेतो टेडी।",
+    "specs": ["Soft plush fabric", "Pikachu hoodie with ears", "Sits upright"],
+    "ne_specs": ["नरम कपडा", "कानसहितको पिकाचु हुडी", "आफैं बस्न सक्ने"],
+    "weight_kg": 0.4,
+    "photos": [
+      {"file": "IMG_6447 2.heic", "kind": "hero", "focus": 0.6, "alt": "Teddy in a yellow Pikachu costume"},
+      {"file": "IMG_6443 2.heic", "kind": "lifestyle", "focus": 0.58, "alt": "Pikachu costume teddy held up outdoors"}
+    ]
+  },
+  {
+    "itemId": "GFT-TED-002", "id": 1011, "slug": "teddy-stitch-costume",
+    "name": "Teddy in Stitch Costume",
+    "ne_name": "स्टिच पोसाकमा टेडी",
+    "cat": "teddies", "art": "teddy", "colors": ["blue"], "badge": "",
+    "occasions": ["for-kids", "for-her", "birthday", "just-because"],
+    "blurb": "A white teddy dressed in a blue Stitch hoodie with big floppy ears.",
+    "ne_blurb": "ठूला लत्रिएका कानसहितको नीलो स्टिच हुडी लगाएको सेतो टेडी।",
+    "specs": ["Soft plush fabric", "Stitch hoodie with ears", "Sits upright"],
+    "ne_specs": ["नरम कपडा", "कानसहितको स्टिच हुडी", "आफैं बस्न सक्ने"],
+    "weight_kg": 0.4,
+    "photos": [
+      {"file": "IMG_6449 2.heic", "kind": "hero", "focus": 0.6, "alt": "Teddy in a blue Stitch costume"}
+    ]
+  },
+  {
+    "itemId": "GFT-TED-003", "id": 1012, "slug": "red-teddy-bear-scarf",
+    "name": "Red Teddy Bear with Scarf",
+    "ne_name": "स्कार्फसहितको रातो टेडी बियर",
+    "cat": "teddies", "art": "teddy", "colors": ["red"], "badge": "gift",
+    "occasions": ["anniversary", "for-her", "birthday"],
+    "blurb": "A big red teddy with long legs and a knitted pink scarf. A classic for Valentine's Day and anniversaries.",
+    "ne_blurb": "लामा खुट्टा र बुनेको गुलाबी स्कार्फसहितको ठूलो रातो टेडी। भ्यालेन्टाइन र वार्षिकोत्सवका लागि क्लासिक उपहार।",
+    "specs": ["Soft plush fabric", "Knitted scarf", "Long floppy legs"],
+    "ne_specs": ["नरम कपडा", "बुनेको स्कार्फ", "लामा खुकुला खुट्टा"],
+    "weight_kg": 1.2,
+    "photos": [
+      {"file": "IMG_6437 2.heic", "kind": "hero", "focus": 0.55, "alt": "Large red teddy bear with a pink knitted scarf"}
+    ]
+  }
+]
